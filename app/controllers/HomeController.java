@@ -54,10 +54,10 @@ public class HomeController extends Controller {
     public Result init(){
         Users users = new Users();
         users.setLogin("Admin");
-        users.setNom("Martinet");
-        users.setPrenom("Etienne");
-        users.setEmail("e.martinet0@gmail.com");
-        users.setPassword("<game-of-thrones>");
+        users.setNom("NOM");
+        users.setPrenom("PRENOM");
+        users.setEmail("EMAIL");
+        users.setPassword("MDP");
         users.save();
         return ok("Succès");
     }
