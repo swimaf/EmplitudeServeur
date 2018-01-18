@@ -1,0 +1,34 @@
+.flex {
+    display:flex;
+}
+#add {
+    background: rgba(0,0,0,.08);
+    justify-content: center;
+    margin: 8px;
+    align-items: center;
+    transition:background 0.5s ease-in;
+    color: #b3b3b3;
+    font-style: italic;
+}
+#add i {
+    font-size:5em;
+}
+#add:hover{
+    background:rgba(0,0,0,.12);
+    cursor:pointer;
+}
+dialog{
+    max-height: 75%;
+    overflow-y: scroll;
+    width:500px;
+}
+.none {
+    display:none;
+}
+
+.mdl-card--expand{
+    background:gray;
+}
+.page-content {
+    flex-direction: column;
+    }

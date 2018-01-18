@@ -1,0 +1,166 @@
+@import java.math.BigInteger; var i=0;
+@(school:School)
+
+
+@dashboard_lite("Etablissement") {
+    <div style="overflow: auto; width:100%">
+    <div id="contenant-info">
+    <h3>@school.getName()
+        <button id="show-dialog" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            @if(school.getUrl() == null) {
+                Ajouter l'URL de récuperation
+            } else {
+                Modifier l'URL de récuperation
+            }
+        </button>
+    </h3>
+    <h6>@school.getUrl()</h6>
+
+    @if(school.getGroups().isEmpty()) {
+        <p class="nofound"><i class="material-icons" style="font-size: 9em">group_work</i><br />Aucun groupe n'a été associé à l'établissement.</p>
+    } else {
+        <div class="mdl-shadow--2dp" id="table-out">
+            <div id="panel" class="none">
+                <button onclick="deleteGroups()" class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="material-icons">delete</i>
+                </button>
+                <button class="mdl-button mdl-js-button mdl-button--icon">
+                <i class="material-icons">edit</i>
+            </button>
+            </div>
+            <table class="mdl-data-table">
+                <thead>
+                <tr>
+                    <th>
+                        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+                            <input type="checkbox" onclick="selectAllGroups(this)" class="mdl-checkbox__input">
+                            <span class="mdl-checkbox__label"></span>
+                        </label>
+                    </th>
+                    <th class="mdl-data-table__cell--non-numeric">Groupe</th>
+                    <th>Identifiant</th>
+                    <th>Autorisation</th>
+                </tr>
+                </thead>
+                <tbody>
+                @for(group <- school.getGroups()) {
+                    @{i=i+1}
+                    <tr>
+                        <td>
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="input@i">
+                                <input type="checkbox" onclick="openPanel()" name="@group.getId()" id="input@i" class="mdl-checkbox__input input-select">
+                                <span class="mdl-checkbox__label"></span>
+                            </label>
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric">@group.getName()</td>
+                        <td>@group.getIdentifiant()</td>
+                        <td>
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="auth">
+                                <input type="checkbox" id="auth" class="mdl-switch__input" @if(group.getAuthentification()) {checked} disabled>
+                                <span class="mdl-switch__label"></span>
+                            </label>
+
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    </div>
+    </div>
+    <div id="add" class="mdl-shadow--2dp">
+        <h5 style="padding: 30px;margin: 0;background: rgb(255,171,64);">Ajouter un groupe</h5>
+        <div style="padding: 30px;padding-top: 10px; display:flex; height:100%">
+        <form action="@routes.AdministratorController.newGroup()" method="POST">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input " type="text" id="name" name="name">
+                <label class="mdl-textfield__label" for="name">Nom</label>
+            </div>
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="identifiant" name="identifiant">
+                <label class="mdl-textfield__label" for="identifiant">Identifiant</label>
+            </div>
+
+            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
+                <input type="checkbox" name="authentification" id="switch-1" class="mdl-switch__input">
+                <span class="mdl-switch__label">Authentification requis</span>
+            </label>
+            <input type="hidden" name="school.id" value="@school.getId()">
+
+            <button id="action-add" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                <i class="material-icons">check</i>
+            </button>
+        </form>
+        </div>
+    </div>
+} {
+
+    <dialog class="mdl-dialog">
+        <h4 class="mdl-dialog__title">Ajouter l'URL de récupération</h4>
+        <div class="mdl-dialog__content">
+            <form id="addURL" method="post" action="@routes.AdministratorController.addUrl(school.getId())">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" value="@school.getUrl()" name="url" type="url" id="url">
+                    <label class="mdl-textfield__label" for="url">URL</label>
+                </div>
+            </form>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button" onclick="addURL()">Ok</button>
+            <button type="button" class="mdl-button close">Annuler</button>
+        </div>
+    </dialog>
+
+} {
+    <script>
+        function deleteGroups() {
+            var form = document.createElement("form");
+            form.setAttribute('method',"post");
+            form.setAttribute('action',"/groups/delete");
+            var inputs = document.querySelectorAll('.input-select:checked');
+            for (var i = 0; i < inputs.length; i++) {
+                form.appendChild(inputs[i]);
+            }
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function selectAllGroups(e) {
+            var inputs = document.querySelectorAll('.input-select');
+            for (var i = 0; i < inputs.length; i++) {
+                inputs[i].parentNode.classList.toggle("is-checked");
+                inputs[i].checked = e.checked
+            }
+        }
+
+        function addURL() {
+            document.querySelector("#addURL").submit();
+        }
+
+        function openPanel() {
+            if(document.querySelector(".input-select:checked") == null){
+                document.querySelector("#panel").classList.add("none");
+            }else{
+                document.querySelector("#panel").classList.remove("none");
+            }
+        }
+
+        var dialog = document.querySelector('dialog');
+        var showDialogButton = document.querySelector('#show-dialog');
+        if (! dialog.showModal) {
+          dialogPolyfill.registerDialog(dialog);
+        }
+        showDialogButton.addEventListener('click', function() {
+          dialog.showModal();
+        });
+        dialog.querySelector('.close').addEventListener('click', function() {
+          dialog.close();
+        });
+
+    </script>
+} {
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/school.css")">
+}

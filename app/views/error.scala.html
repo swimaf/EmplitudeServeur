@@ -1,0 +1,19 @@
+@(code: String, message: String)
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>404 Erreur</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/error.css")">
+    <meta http-equiv="refresh" content="5; URL=/">
+</head>
+<body>
+    <i class="material-icons">error_outline</i>
+    <h1>Erreur @code</h1>
+    <p>@message</p>
+    <p>Vous allez être redirigés vers la page d'accueil.</p>
+</body>
+</html>

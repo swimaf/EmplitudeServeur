@@ -1,0 +1,35 @@
+@(city : City)
+
+<div id="contenant">
+    <div id="header-card" style="background:gray url('@city.getPhoto()')">
+        <h3>@city.getName()
+            <button onclick="etablissement.showModal();" id="addEtablissement" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                <i class="material-icons">school</i>
+            </button>
+        </h3>
+    </div>
+    <div id="school">
+        @if(city.getSchools().isEmpty()){
+                <p class="nofound center-center">Aucun établissement ajouté.</p>
+        } else {
+
+            <table class="mdl-data-table mdl-js-data-table full">
+                <thead>
+                <tr>
+                    <th class="mdl-data-table__cell--non-numeric">Nom</th>
+                    <th>Supprimer</th>
+                </tr>
+                </thead>
+                <tbody>
+                @for(school <- city.getSchools()) {
+                    <tr>
+                        <td style="white-space: normal" class="mdl-data-table__cell--non-numeric"><a href="./school/@school.getId()">@school.getName()</a></td>
+                        <td><i class="material-icons">delete</i></td>
+                    </tr>
+                }
+
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

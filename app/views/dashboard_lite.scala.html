@@ -1,0 +1,46 @@
+@(title: String)(contenu: Html)(dialog: Html)(script:Html)(link:Html)
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>@title</title>
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("design/material.min.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/dialog.css")">
+    <script src="@routes.Assets.versioned("javascripts/dialog-polyfill.js")"></script>
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/dashboard.css")">
+    @link
+    <script src="@routes.Assets.versioned("design/material.min.js")"></script>
+</head>
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <button onclick="document.location = '../city'" class="mdl-button mdl-js-button mdl-button--icon" style="margin-right: 20px;">
+                <i class="material-icons">arrow_back</i>
+            </button>
+            <h2>@title</h2>
+            <div class="mdl-layout-spacer"></div>
+            <i class="material-icons">account_circle</i>
+            <p>Etienne MARTINET</p>
+        </div>
+    </header>
+    <main class="mdl-layout__content">
+        <div class="page-content">
+            @contenu
+        </div>
+    </main>
+
+
+</div>
+@dialog
+</body>
+
+@script
+
+</html>

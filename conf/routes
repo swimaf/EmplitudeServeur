@@ -1,0 +1,35 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+GET    /                          controllers.HomeController.index
+POST   /email                     controllers.HomeController.email
+POST   /connexion                 controllers.HomeController.connexion
+GET    /nantes                    controllers.AdministratorController.nantes
+GET    /init                      controllers.HomeController.init
+GET    /dashboard/administrator   controllers.AdministratorController.administrator
+GET    /dashboard/city            controllers.AdministratorController.city
+GET    /logout                    controllers.HomeController.logout
+POST   /city/new                  controllers.AdministratorController.newCity
+POST   /school/new                controllers.AdministratorController.newSchool
+POST   /group/new                 controllers.AdministratorController.newGroup
+POST   /groups/delete             controllers.AdministratorController.groupDelete
+POST   /user/new                  controllers.AdministratorController.newUser
+POST   /school/addUrl/:school     controllers.AdministratorController.addUrl(school: Integer)
+GET    /school/valid/:city        controllers.AdministratorController.validSchool(city: String)
+GET    /dashboard/school/:id      controllers.AdministratorController.getSchool(id:Integer)
+GET    /user/delete/:id           controllers.AdministratorController.deleteUser(id:String)
+GET    /city/:id                  controllers.AdministratorController.getCity(id:String)
+POST   /user/editPassword         controllers.AdministratorController.editPassword
+
+# DATA
+POST   /data/nantes               controllers.DataController.saveNantes()
+GET    /data/index               controllers.DataController.index()
+
+
+GET    /api/cities                controllers.ApiController.getCities
+GET    /api/schools/:city         controllers.ApiController.getSchools(city: String)
+GET    /api/groups/:school        controllers.ApiController.getGroups(school: Integer)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

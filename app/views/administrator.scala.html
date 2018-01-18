@@ -1,0 +1,128 @@
+@(users:List[Users])
+
+
+@dashboard("Administrateur") {
+
+    <div class="mdl-grid" style="width: 100%; padding:20px">
+        @for(user <- users) {
+            <div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col">
+                <div class="mdl-card__title mdl-card--expand">
+                    <h2 class="mdl-card__title-text">@user.getPrenom() @user.getNom()</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    @user.getLogin()
+                    @user.getEmail()
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-button--icon" href="@routes.AdministratorController.deleteUser(user.getLogin())">
+                        <i class="material-icons">delete</i>
+                    </a>
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-button--icon">
+                        <i class="material-icons">edit</i>
+                    </a>
+                    @if(user.getLogin().equals(session().get("login"))) {
+                        <a class="mdl-button mdl-button--colored mdl-js-button mdl-button--icon" onclick="openModalEditPassword()">
+                            <i class="material-icons">lock</i>
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+        <div class="mdl-card mdl-cell mdl-cell--3-col" id="add">
+            <i class="material-icons">add</i>Ajouter un administrateur
+        </div>
+
+    </div>
+    @if(flash().contains("error")) {
+        <p class="error">@flash().get("error")</p>
+    }
+} {
+    <dialog class="mdl-dialog" id="addAdmin">
+        <h4 class="mdl-dialog__title">Ajouter un administrateur</h4>
+        <div class="mdl-dialog__content">
+            <form action="/user/new" method="POST">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text" id="login" required name="login">
+                    <label class="mdl-textfield__label" for="login">Login</label>
+
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text" id="nom" name="nom">
+                    <label class="mdl-textfield__label" for="nom">Nom</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text" id="prenom" name="prenom">
+                    <label class="mdl-textfield__label" for="prenom">Prénom</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="email" id="email" name="email" required>
+                    <label class="mdl-textfield__label" for="email">Email</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="password"  name="password" id="password3" required>
+                    <label class="mdl-textfield__label" for="password3">Mot de passe</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="password" id="password4" name="password2" required>
+                    <label class="mdl-textfield__label" for="password4">Confirmer le mot de passe</label>
+                </div>
+                <div class="mdl-dialog__actions" style="padding:0;">
+                    <input type="submit" class="mdl-button " value="Valider"/>
+                    <button type="button" class="mdl-button close">Annuler</button>
+                </div>
+            </form>
+        </div>
+
+    </dialog>
+
+    <dialog class="mdl-dialog" id="editPassword">
+        <h4 class="mdl-dialog__title">Modifier le mot de passe</h4>
+        <div class="mdl-dialog__content">
+            <form action="/user/editPassword" method="POST">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="password"  name="password" id="password" required>
+                    <label class="mdl-textfield__label" for="password">Mot de passe</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="password" id="password2" name="password2" required>
+                    <label class="mdl-textfield__label" for="password2">Confirmer le mot de passe</label>
+                </div>
+                <div class="mdl-dialog__actions" style="padding:0;">
+                    <input type="submit" class="mdl-button" value="Valider"/>
+                    <button type="button" class="mdl-button close">Annuler</button>
+                </div>
+            </form>
+
+        </div>
+
+    </dialog>
+} {
+    <script>
+        var dialog = document.querySelector('#addAdmin');
+        var showDialogButton = document.querySelector('#add');
+        if (! dialog.showModal) {
+          dialogPolyfill.registerDialog(dialog);
+        }
+        showDialogButton.addEventListener('click', function() {
+          dialog.showModal();
+        });
+        dialog.querySelector('.close').addEventListener('click', function() {
+          dialog.close();
+        });
+
+        var editPassword = document.querySelector('#editPassword');
+        if (! editPassword.showModal) {
+          dialogPolyfill.registerDialog(editPassword);
+        }
+        function openModalEditPassword() {
+              editPassword.showModal();
+        }
+        editPassword.querySelector('.close').addEventListener('click', function() {
+          editPassword.close();
+        });
+
+    </script>
+} {
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/dashboard.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/admin.css")">
+}

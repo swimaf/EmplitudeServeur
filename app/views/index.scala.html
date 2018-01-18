@@ -1,0 +1,267 @@
+@(title: String)(form: Form[models.Users])
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <title>@title</title>
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!--<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
+
+        <link rel="stylesheet" href="@routes.Assets.versioned("design/material.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <script src="@routes.Assets.versioned("design/material.min.js")"></script>
+    </head>
+    <body>
+        <button id="back" class="mdl-button mdl-js-button" style="display:none">
+          <img src="@routes.Assets.versioned("images/ic_arrow_back.svg")" />
+        </button>
+
+        <button id="next" class="mdl-button mdl-js-button">
+          <img src="@routes.Assets.versioned("images/ic_arrow_forward.svg")" />
+        </button>
+        <div class="mdl-tooltip mdl-tooltip--left " for="next">
+            A propos
+        </div>
+
+        <div id="home" class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+          <!--<header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+              <div class="mdl-layout-spacer"></div>
+              <nav class="mdl-navigation mdl-layout--large-screen-only">
+                <a class="mdl-navigation__link" href="">Link</a>
+                <a class="mdl-navigation__link" href="">A propos</a>
+                <a class="mdl-navigation__link" href="">Contact</a>
+              </nav>
+            </div>
+          </header>-->
+          <div class="mdl-layout__drawer">
+            <span class="mdl-layout-title">Connexion</span>
+            <form id="connexion" action="./connexion" method="POST">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input"  name="login" type="text" id="login" required>
+                <label class="mdl-textfield__label" for="login">Login</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" name="password" type="password" id="pass" required>
+                <label class="mdl-textfield__label" for="pass">Mot de passe</label>
+              </div>
+              <input class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit" value="Valider">
+
+            </form>
+          </div>
+          <main class="mdl-layout__content">
+            <div class="page-content">
+            <article id="container">
+
+                <section id="header" class="">
+                    <div class="info">
+                        <h1 class=" ">Empli'tude</h1>
+                        <p>Première application android de gestion d'emploi du temps universel pour étudiant. Vous pourrez y retrouver votre planning, un réveil associé à votre premier cour de la journée, une liste de tâche et une gestion des sons lors des cours.</p>
+                        <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" href="https://play.google.com/store/apps/details?id=com.martinet.emplitude&hl=fr"><img src="@routes.Assets.versioned("images/ic_file_download.svg")" />Download</a>
+                    <div>
+                </section>
+                 <section id="propos" class="">
+                    <div class="info">
+                        <h1>A propos</h1>
+                        <p>Développée par des étudiants en informatique.</p>
+                    </div>
+
+                    <div class="flex profils">
+                        <div class="demo-card-square mdl-card mdl-shadow--2dp">
+                          <div class="mdl-card__title mdl-card--expand">
+                            <img src="https://graph.facebook.com/100000480834658/picture?width=300&height=300" />
+                          </div>
+                          <div class="mdl-card__actions mdl-card--border">
+                            <h6>Etienne MARTINET</h6>
+                          </div>
+                        </div>
+
+                       <div class="demo-card-square mdl-card mdl-shadow--2dp">
+                          <div class="mdl-card__title mdl-card--expand">
+                            <img src="https://graph.facebook.com/100000599390801/picture?width=300&height=300" />
+                          </div>
+                          <div class="mdl-card__actions mdl-card--border">
+                            <h6>Arnaud REGNIER</h6>
+                          </div>
+                        </div>
+
+
+                        <div class="demo-card-square mdl-card mdl-shadow--2dp">
+                          <div class="mdl-card__title mdl-card--expand">
+                            <img src="https://graph.facebook.com/100003118712963/picture?width=300&height=300" />
+                          </div>
+                          <div class="mdl-card__actions mdl-card--border">
+                            <h6>Floriant GOSSELIN</h6>
+                          </div>
+                        </div>
+
+                        <div class="demo-card-square mdl-card mdl-shadow--2dp">
+                          <div class="mdl-card__title mdl-card--expand">
+                            <img src="https://graph.facebook.com/100001263117048/picture?width=300&height=300" />
+                          </div>
+                          <div class="mdl-card__actions mdl-card--border">
+                            <h6>Anthony PIAUD</h6>
+                          </div>
+                        </div>
+
+                    </div>
+                </section>
+                 <section id="contact" >
+                    <div class="flex justify containeur">
+                        <div class="partie">
+                            <h1 class=" ">Contact</h1>
+                            <p>Si vous voulez suggérer des modifications sur l'application ou bien demander une correction de bug c'est ici. Vous pouvez également nous demander d'ajouter des écoles ou bien de proposer votre collaboration via ce formulaire.</p>
+                            <p class="italic">Note : nous pouvons mettre un certain temps pour répondre aux différentes demande.</p>
+                        </div>
+                        <div class="partie">
+                            <form enctype="multipart/form-data" action="./email" id="formEmail" method="POST">
+                              <div class="flex">
+                                  <img src="@routes.Assets.versioned("images/ic_email_black.svg")" />
+                                  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" name="email" type="email" id="email" required>
+                                    <label class="mdl-textfield__label" for="email">Email</label>
+                                  </div>
+                              </div>
+                              <div class="flex">
+                                  <img src="@routes.Assets.versioned("images/ic_forward_black.svg")" />
+                                  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" name="object" type="text" id="objet" required>
+                                    <label class="mdl-textfield__label" for="objet">Objet</label>
+                                  </div>
+                              </div>
+                              <div class="flex">
+                                  <img src="@routes.Assets.versioned("images/ic_message_black.svg")" />
+                                  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <textarea class="mdl-textfield__input" name="message" type="text" rows= "3" id="contenu" ></textarea>
+                                    <label class="mdl-textfield__label" for="contenu">Contenu</label>
+                                  </div>
+                              </div>
+                              <input style="float: right;" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" value="Envoyer">
+
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+            </article>
+            <div id="loading" class="mdl-js-snackbar mdl-snackbar" style="justify-content: inherit;">
+                <div class="mdl-spinner mdl-js-spinner is-active" style="margin: 10px;"></div>
+                <div class="mdl-snackbar__text"></div>
+                <button class="mdl-snackbar__action" type="button"></button>
+            </div>
+
+            </div>
+
+          </main>
+          <div id="ajax" style="z-index:55555" class="mdl-js-snackbar mdl-snackbar">
+                <div class="mdl-snackbar__text"></div>
+                <button class="mdl-snackbar__action" type="button"></button>
+            </div>
+        </div>
+
+
+    </body>
+
+    <script>
+        var x;
+        var etat = 0;
+        var notification = document.querySelector('#loading');
+        var ajax = document.querySelector('#ajax');
+
+        var data = {
+          message: 'Chargement ...',
+          timeout:100000
+        };
+
+
+
+        document.querySelector("#next").addEventListener("click", function() {
+            etat++;
+            if(etat == 2) {
+                document.querySelector("#next").style.display = "none";
+            }
+            document.querySelector("#container").style.transform = "translateX(-"+etat*100+"vw)";
+            document.querySelector("#back").style.display = "";
+        });
+
+        document.querySelector("#back").addEventListener("click", function() {
+            etat--;
+            if(etat == 0) {
+                document.querySelector("#back").style.display = "none";
+            }
+            document.querySelector("#container").style.transform = "translateX(-"+etat*100+"vw)";
+            document.querySelector("#next").style.display = "";
+        });
+
+        document.addEventListener("mousedown", function(e){
+            x = e.clientX;
+            document.addEventListener("mousemove", myFunction);
+
+        });
+        document.addEventListener("mouseup", function(){
+            document.removeEventListener("mousemove", myFunction);
+        });
+
+        document.querySelector("#connexion").addEventListener("submit", function(e){
+            e.preventDefault();
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function(oEvent) {
+                if (xhttp.status != 200) {
+                  ajax.MaterialSnackbar.showSnackbar({
+                      message: xhttp.responseText,
+                  });
+                } else {
+                  location.replace("./dashboard/administrator");
+                }
+            };
+            var data = new FormData(this);
+            xhttp.open("POST", this.getAttribute("action"), true);
+            xhttp.send(data);
+        });
+
+        document.querySelector("#formEmail").addEventListener("submit", function(e){
+            e.preventDefault();
+            notification.MaterialSnackbar.showSnackbar(data);
+            sendMail(this);
+            return;
+        });
+
+        var node = document.createElement("DIV");
+        node.classList = "mdl-layout__obfuscator";
+        node.addEventListener("click", toogleDrawer);
+        document.querySelector("#home").appendChild(node);
+
+        function toogleDrawer() {
+            document.querySelector(".mdl-layout__drawer").classList.toggle("is-visible");
+            document.querySelector(".mdl-layout__obfuscator").classList.toggle("is-visible");
+        }
+
+        function myFunction(e) {
+                if(e.clientX - x > 300){
+                    toogleDrawer();
+                    document.removeEventListener("mousemove", myFunction);
+                }
+        }
+
+        function sendMail(form) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onload = function(oEvent) {
+            notification.classList.toggle("mdl-snackbar--active");
+            if (xhttp.status == 200) {
+              ajax.MaterialSnackbar.showSnackbar({
+                  message: xhttp.responseText,
+              });
+            } else {
+              ajax.MaterialSnackbar.showSnackbar({
+                  message: "Erreur lors de l'envoie du mail, veuillez réessayer.",
+              });
+            }
+          };
+          var data = new FormData(form);
+          xhttp.open("POST", form.getAttribute("action"), true);
+          xhttp.send(data);
+        }
+    </script>
+
+</html>

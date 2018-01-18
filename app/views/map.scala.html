@@ -1,0 +1,339 @@
+@import com.fasterxml.jackson.databind.JsonNode
+
+@(city: JsonNode)
+
+@dashboard("Dashboard") {
+    <div id="place">
+        <div id="map-conteneur" onclick="closeinfo">
+            <div id="map"></div>
+            <button id="add" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                <i class="material-icons">add</i>
+            </button>
+        </div>
+
+        <div id="information" class="mdl-shadow--2dp"></div>
+    </div>
+    <div id="ajax" style="z-index:55555" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>
+} {
+
+    <dialog id="ville" class="mdl-dialog">
+        <h4 class="mdl-dialog__title">Ajouter une ville</h4>
+        <div class="mdl-dialog__content">
+            <form action="/city/new" onsubmit="return false;">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" id="autocomplete" id="label-ville" type="text"></input>
+                    <label class="mdl-textfield__label" for="label-ville">Nom</label>
+                </div>
+            </form>
+
+        </div>
+        <div class="mdl-dialog__actions" style="padding:0;">
+            <button type="button" class="mdl-button" onclick="add()">Valider</button>
+            <button type="button" class="mdl-button close">Annuler</button>
+        </div>
+    </dialog>
+
+    <dialog id="etablissement" class="mdl-dialog">
+        <h4 class="mdl-dialog__title">Ajouter un établissement</h4>
+        <div class="mdl-dialog__content">
+            <form action="/school/new" method="POST" onsubmit="return false;">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="ajax-autocomplete">
+                    <input class="mdl-textfield__input" id="label-etablissement" type="text"/>
+                    <label class="mdl-textfield__label" for="label-etablissement">Nom</label>
+                </div>
+            </form>
+        </div>
+        <div class="mdl-dialog__actions" style="padding:0;">
+            <button type="button" class="mdl-button" onclick="addEtablissement()">Valider</button>
+            <button type="button" class="mdl-button" onclick="etablissement.close();">Annuler</button>
+        </div>
+    </dialog>
+} {
+
+    <script id="myJson" type="application/json">
+        @Html(city.toString)
+    </script>
+
+    <script>
+        var placeSearch, autocomplete, map, place, placeOpen, list;
+
+        var dialog = document.querySelector('#ville');
+        var etablissement = document.querySelector('#etablissement');
+        var showDialogButton = document.querySelector('#add');
+        var toast = document.querySelector('#ajax');
+        var city = JSON.parse(document.querySelector('#myJson').innerHTML);
+
+        if (! dialog.showModal) {
+          dialogPolyfill.registerDialog(dialog);
+        }
+        if (! etablissement.showModal) {
+          dialogPolyfill.registerDialog(etablissement);
+        }
+        showDialogButton.addEventListener('click', function() {
+          dialog.showModal();
+        });
+        dialog.querySelector('.close').addEventListener('click', function() {
+          dialog.close();
+        });
+        function initMap() {
+          var init = { lat: 48, lng: 2 };
+          map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 6,
+            center: init,
+            disableDefaultUI: true,
+            zoomControl: true,
+            mapTypeId: google.maps.MapTypeId.TERRAIN,
+            mapTypeControl: true,
+            mapTypeControlOptions: {
+                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+            },
+            zoomControlOptions: {
+                position: google.maps.ControlPosition.LEFT_BOTTOM
+            },
+          });
+
+          city.forEach(function(c) {
+            addMarker({lat : c.lat, lng : c.lng}, map, c.name);
+          });
+
+          map.addListener("click", closeinfo);
+
+          autocomplete = new google.maps.places.Autocomplete(
+              (document.getElementById('autocomplete')),
+              {types: ['geocode']});
+
+          autocomplete.addListener('place_changed', fillInAddress);
+
+        }
+
+        function addMarker(location, map, name) {
+          var marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            title : name
+          });
+          marker.name = "Nantes";
+          marker.addListener("click", function() {
+            placeOpen = this;
+            refreshContent(this.title);
+            document.querySelector("#information").style.minWidth = "350px";
+          });
+
+        }
+
+        function refreshContent(ville) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function(oEvent) {
+                if (xhttp.status != 200) {
+                  toast.MaterialSnackbar.showSnackbar({
+                      message: xhttp.responseText,
+                  });
+                } else {
+                    document.querySelector("#information").innerHTML = xhttp.responseText;
+                }
+            };
+            xhttp.open("GET", "/city/"+ville, true);
+            xhttp.send();
+
+            var ajax = new XMLHttpRequest();
+            ajax.open("GET", "/school/valid/"+ville, true);
+            ajax.onload = function() {
+                list = JSON.parse(ajax.responseText).map(function(i) { return i; });
+                var auto = document.querySelector(".awesomplete");
+                if(auto) {
+                    auto.parentNode.appendChild(auto.querySelector("input"));
+                    auto.outerHTML = "";
+                }
+                new Awesomplete(document.querySelector("#ajax-autocomplete input"),{ list: list,maxItems : 5});
+            };
+            ajax.send();
+        }
+
+        function fillInAddress() {
+          place = autocomplete.getPlace();
+        }
+
+        function add() {
+           var xhttp = new XMLHttpRequest();
+           xhttp.onload = function(oEvent) {
+                if (xhttp.status != 200) {
+                  toast.MaterialSnackbar.showSnackbar({
+                      message: xhttp.responseText,
+                  });
+                } else {
+                    addMarker({lat : place.geometry.location.lat(), lng:place.geometry.location.lng()}, map, place.name);
+                    dialog.close();
+                }
+           };
+           var data = new FormData();
+           data.append("lat", place.geometry.location.lat());
+           data.append("lng", place.geometry.location.lng());
+           data.append("name", place.name);
+           if(place.hasOwnProperty("photos")){
+                data.append("photo", place.photos[0].getUrl({'maxWidth': 400, 'maxHeight': 200}));
+           }
+           xhttp.open("POST", "/city/new", true);
+           xhttp.send(data);
+           return false;
+
+        }
+
+        function closeinfo() {
+            document.querySelector("#information").style.minWidth = "0px";
+        }
+
+        function addEtablissement() {
+           var etablissementInput = document.querySelector("#label-etablissement").value;
+           if(list.indexOf(etablissementInput) > -1 ){
+               var xhttp = new XMLHttpRequest();
+               xhttp.onload = function(oEvent) {
+                    if (xhttp.status != 200) {
+                      toast.MaterialSnackbar.showSnackbar({
+                          message: xhttp.responseText,
+                      });
+                    } else {
+                        refreshContent(placeOpen.title);
+                        etablissement.close();
+                    }
+               };
+               var data = new FormData();
+               data.append("name", document.querySelector("#label-etablissement").value);
+               data.append("city.name", placeOpen.title);
+               xhttp.open("POST", "/school/new", true);
+               xhttp.send(data);
+               return false;
+           } else {
+                toast.MaterialSnackbar.showSnackbar({
+                    message: "Saisir un etablissement valide"
+                });
+           }
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYrNQddwyITMbiBaaSiwCTRtwkUIanuSk&signed_in=true&libraries=places&callback=initMap" async defer></script>
+    <script src="@routes.Assets.versioned("javascripts/autocomplete.js")"></script>
+
+} {
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height:100%;
+        width:100%;
+      }
+      #map {
+        left:0;
+        height: 100%;
+        width:100%;
+      }
+    #information {
+        position:relative;
+        display:flex;
+        right:0;
+        width:0px;
+        height:100%;
+        background:white;
+        transition: width 0.5s;
+    }
+
+    #information h3{
+        margin:0;
+        font-weight:300;
+        width:100%;
+        color:white;
+        padding:10px;
+        align-items: flex-end;
+        display: flex;
+        flex-direction: row;
+        -ms-flex-align: end;
+        -webkit-align-items: flex-end;
+    }
+
+    #contenant {
+        display:block;
+        width:100%;
+    }
+
+    #header-card {
+        width:100%;
+        height:200px;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+        position:relative;
+        align-items: flex-end;
+        display: flex;
+        flex-direction: row;
+        -ms-flex-align: end;
+        -webkit-align-items: flex-end;
+    }
+
+    #place {
+        display:flex;
+        position:absolute !important;
+        width:100%;
+        left:0;
+        height:100%;
+    }
+    #map-conteneur {
+        width:100%;
+        position:relative;
+        height:100%;
+    }
+    #map-conteneur button{
+        position:absolute;
+        right:0;
+        bottom:0;
+        margin:20px;
+    }
+    .pac-container{
+        z-index : 500000 !important;
+    }
+
+    #addEtablissement {
+        margin-right: 0;
+        margin-bottom: -25px;
+        z-index: 555;
+    }
+    #school {
+        height: calc(100% - 200px);
+        display:flex;
+        max-width: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        position:relative;
+    }
+    #information tr {
+        cursor:pointer;
+    }
+
+    .awesomplete ul {
+        position: absolute;
+        background: white;
+        z-index: 5555;
+        border: 1px solid gainsboro;
+        left: 0;
+        right: 0;
+        margin: 0;
+        list-style: none;
+        padding: 0px;
+    }
+
+     .awesomplete ul li:hover{
+        background:gainsboro;
+        cursor:pointer;
+    }
+
+    .awesomplete ul li{
+        padding: 2px 2px 2px 8px;
+        border-bottom: 1px solid gainsboro;
+        transition:background 0.5s;
+        font-size:12px;
+    }
+    .awesomplete ul li mark{
+        background:inherit;
+        font-weight:700;
+    }
+    </style>
+}

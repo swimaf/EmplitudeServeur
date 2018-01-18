@@ -1,0 +1,17 @@
+#add {
+    background:#ececec;
+    border :1px solid rgba(180, 180, 180, 0.5);
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(180, 180, 180, 0.5);
+    font-size:5em;
+    cursor:pointer;
+}
+#add i {
+    font-size:1em;
+}
+
+.mdl-card{
+    margin:1%;
+}
